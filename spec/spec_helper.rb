@@ -14,7 +14,7 @@ begin
   def running_ruby_18?
     defined?(RUBY_VERSION) and RUBY_VERSION =~ /^1\.8\.\d+/
   end
-  require 'posix/spawn' if running_ruby_18?
+  require 'posix/spawn' if running_ruby_18? && RUBY_PLATFORM != "java"
 rescue LoadError
   STDERR.puts "WARNING: foreman requires gem `posix-spawn` on Ruby #{RUBY_VERSION}. Please `gem install posix-spawn`."
 end

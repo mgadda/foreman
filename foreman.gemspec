@@ -22,6 +22,7 @@ Gem::Specification.new do |gem|
 
   if ENV["PLATFORM"] == "java"
     gem.platform = Gem::Platform.new("java")
+    gem.add_dependency = 'childprocess', '>= 0.3.9'
   end
 
   if ENV["PLATFORM"] == "mingw32"

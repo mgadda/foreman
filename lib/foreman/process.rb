@@ -1,5 +1,6 @@
 require "foreman"
 require "shellwords"
+require "childprocess"
 
 class Foreman::Process
 
@@ -49,15 +50,18 @@ class Foreman::Process
     env    = @options[:env].merge(options[:env] || {})
     output = options[:output] || $stdout
     runner = "#{Foreman.runner}".shellescape
-    
+
     if Foreman.windows?
       Dir.chdir(cwd) do
         Process.spawn env, expanded_command(env), :out => output, :err => output
       end
     elsif Foreman.jruby_18? || Foreman.ruby_18?
-      require "posix/spawn"
-      wrapped_command = "#{runner} -d '#{cwd.shellescape}' -p -- #{expanded_command(env)}"
-      POSIX::Spawn.spawn(*spawn_args(env, wrapped_command.shellsplit, {:out => output, :err => output}))
+      ChildProcess.posix_spawn = true
+      process = ChildProcess.build(Foreman.runner, '-d', cwd, '-p', '--', command)
+      env.each { |k,v| process.environment[k] = v }
+      process.io.stdout = process.io.stderr = output
+      process.start
+      process.pid
     else
       wrapped_command = "#{runner} -d '#{cwd.shellescape}' -p -- #{command}"
       Process.spawn env, wrapped_command, :out => output, :err => output

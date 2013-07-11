@@ -38,4 +38,4 @@ if [ "$read_profile" = "1" ]; then
   fi
 fi
 
-exec "$@"
+exec $@

@@ -144,7 +144,7 @@ private ######################################################################
       Kernel.require 'posix/spawn' # Use Kernel explicitly so we can mock the require call in the spec
     rescue LoadError
       error "foreman requires gem `posix-spawn` on Ruby #{RUBY_VERSION}. Please `gem install posix-spawn`."
-    end if Foreman.ruby_18?
+    end if Foreman.ruby_18? && !Foreman.jruby_18?
   end
 
   def procfile
